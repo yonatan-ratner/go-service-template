@@ -1,0 +1,28 @@
+
+name: stt-api-gateway # Change name accordingly
+services:
+  api:
+    stdin_open: true
+    tty: true
+    container_name: stt-api-gateway-container # Change name accordingly
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: core
+    volumes:
+        - type: bind
+          source: './Project' # Project in local directory
+          target: /go/src # Project in container directory
+    ports: # host:port binding on localhost between host and container
+        - "3000:3000" # development port, add as required.
+    image: stt-api-gateway-image
+    develop:
+      watch: # Adapt this section for the relevant 'hot reload' equivalent
+        - action: sync 
+          path: ./Project
+          target: /usr/src/app
+          ignore:
+            - node_modules/
+        - action: rebuild
+          path: ./Project/package.json
+    command:  # change as needed
